@@ -66,6 +66,7 @@ export class TodoService {
     const todoGroups = await this.todoGroupRepository
       .createQueryBuilder('todoGroup')
       .leftJoinAndSelect('todoGroup.owner', 'owner')
+      .leftJoinAndSelect('todoGroup.todos', 'items')
       .where('owner.id = :ownerId', { ownerId: user.id })
       .getMany();
 
