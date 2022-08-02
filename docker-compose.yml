@@ -1,0 +1,44 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  
+  # api:
+  #   build: 
+  #     context: ./api
+  #     dockerfile: Dockerfile
+  #   container_name: api
+  #   restart: always
+  #   env_file:
+  #     - .env_files/api.env
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - inventory-content:/data/inventory
+  #     - playbook-content:/data/playbook
+  #     - log-content:/data/log
+      
+  # ui:
+  #   build: 
+  #     context: ./ui
+  #     dockerfile: Dockerfile
+  #   container_name: ui
+  #   env_file:
+  #     - .env_files/ui.env
+  #   restart: always
+    
+  #   ports:
+  #     - "8080:80"
