@@ -115,8 +115,8 @@ export default {
     handleTodoItemDelete(todoItemId) {
       this.todoStore.deleteGroupItem(this.$route.params.id, todoItemId);
     },
-    handleCompleteStatusChange(todoItemId, isComplete) {
-      this.todoStore.updateItemCompleteStatus(this.$route.params.id, todoItemId, isComplete);
+    handleCompleteStatusChange(todoItemId, groupId, isComplete) {
+      this.todoStore.updateItemCompleteStatus(groupId, todoItemId, isComplete);
     },
     handleTodoItemEditConfirm() {
       console.log("handleTodoItemEditConfirm");
