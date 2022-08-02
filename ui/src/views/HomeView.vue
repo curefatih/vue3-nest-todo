@@ -12,7 +12,7 @@
       <div class="filterCols">
         <div class="filterCol">
           <div class="filterName">Completed</div>
-          <InputExt type="checkbox" name="completed" @change="showCompleted = !showCompleted" />
+          <input type="checkbox" name="completed" :checked="showCompleted" @change="showCompleted = !showCompleted" />
         </div>
         <div class="filterCol">
           <div class="filterName">Group</div>
@@ -29,7 +29,7 @@
           <div class="filterName">Due date after</div>
           <InputExt type="date" name="dueDate" :modelValue="filter.dueDate || ''" @change="handleFilterChange" />
         </div>
-        <ButtonExt @click="filter = {}; filterActiveGroupId = ''">Reset filters</ButtonExt>
+        <ButtonExt @click="filter = {}; filterActiveGroupId = ''; showCompleted = false">Reset filters</ButtonExt>
       </div>
     </div>
 
@@ -267,13 +267,9 @@ export default {
         this.addNewTodoGroup()
       }
     },
-
     cancel(close) {
       close()
     },
-
-    // DERIVED
-
     handleShowNewTodoItemModal() {
       this.todoStore.resetError();
       this.showTodoItemModal = true;
