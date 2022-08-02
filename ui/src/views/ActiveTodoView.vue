@@ -13,7 +13,7 @@
         ({{ todoStore.getGroupCompletedItemsCount($route.params.id) }})
       </router-link>
 
-      <ToDoList :todos="todoStore.getGroupActiveItems($route.params.id)" @edit:item="handleTodoItemEdit"
+      <ToDoList :items="todoStore.getGroupActiveItems($route.params.id)" @edit:item="handleTodoItemEdit"
         @delete:item="handleTodoItemDelete" @completeChange:item="handleCompleteStatusChange" />
       <ButtonExt @click="handleShowNewTodoItemModal">Add new</ButtonExt>
     </Fragment>
@@ -85,19 +85,14 @@ export default {
   },
   methods: {
     handleShowNewTodoItemModal() {
-      this.showTodoItemModal = true;
       this.clearState();
+      this.showTodoItemModal = true;
       this.isEdit = false;
     },
     async handleAddNewTodoItem() {
       const result = await this.todoStore.addGroupItem(this.$route.params.id, this.todoItem);
       if (result) {
-        this.newTodo = {
-          name: "",
-          description: "",
-          priority: 0,
-        };
-        this.showTodoItemModal = false;
+        this.clearState();
       }
     },
     clearState() {

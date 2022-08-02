@@ -12,7 +12,7 @@
         ({{ todoStore.getGroupActiveItemsCount($route.params.id) }})
       </router-link>
 
-      <ToDoList :todos="todoStore.getGroupCompletedItems($route.params.id)" @delete:item="handleTodoItemDelete"
+      <ToDoList :items="todoStore.getGroupCompletedItems($route.params.id)" @delete:item="handleTodoItemDelete"
         @completeChange:item="handleCompleteStatusChange" :hideEdit="true" />
     </Fragment>
 

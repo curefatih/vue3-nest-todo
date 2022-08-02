@@ -1,12 +1,13 @@
 <template>
   <ul class="todo-list">
-    <p v-show="!todos.length">
+    <p v-show="!items.length">
       No todo found!
     </p>
     <li v-for="todo in filteredItems" :key="todo.id">
       <ToDo :id="todo.id" :text="todo.text" :dueDate="todo.dueDate" :priority="todo.priority"
-        :completed="todo.completed" @edit="$emit('edit:item', todo.id)" @delete="$emit('delete:item', todo.id)"
-        @complete="handleCompleteChange" :hideEdit="hideEdit" />
+        :completed="todo.completed" @edit="$emit('edit:item', todo.id, todo.groupId)"
+        @delete="$emit('delete:item', todo.id, todo.groupId)"
+        @complete="(id, completed) => handleCompleteChange(id, todo.groupId, completed)" :hideEdit="hideEdit" />
     </li>
   </ul>
 </template>
@@ -15,7 +16,8 @@
 import ToDo from './ToDo.vue'
 export default {
   props: {
-    todos: {
+    groupId: String,
+    items: {
       type: Array,
       default: function () {
         return [];
@@ -35,12 +37,12 @@ export default {
   components: { ToDo },
   computed: {
     filteredItems() {
-      return this.todos.filter(this.filter);
+      return this.items.filter(this.filter);
     }
   },
   methods: {
-    handleCompleteChange(id, completed) {
-      this.$emit('completeChange:item', id, completed);
+    handleCompleteChange(id, groupId, completed) {
+      this.$emit('completeChange:item', id, groupId, completed,);
     }
   }
 }
