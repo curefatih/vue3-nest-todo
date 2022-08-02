@@ -5,10 +5,12 @@
     </p>
     <Fragment v-show="todoStore.isLoaded && !todoStore.loading">
       <Heading>
-        Active To-do's
+        Completed To-do's
       </Heading>
 
-      <router-link :to="'/todo/' + $route.params.id + '/active'">go to active todo's</router-link>
+      <router-link :to="'/todo/' + $route.params.id + '/active'">go to active todo's
+        ({{ todoStore.getGroupActiveItemsCount($route.params.id) }})
+      </router-link>
 
       <ToDoList :todos="todoStore.getGroupCompletedItems($route.params.id)" @delete:item="handleTodoItemDelete"
         @completeChange:item="handleCompleteStatusChange" :hideEdit="true" />

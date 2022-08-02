@@ -8,7 +8,10 @@
         Active To-do's
       </Heading>
 
-      <router-link :to="'/todo/' + $route.params.id + '/completed'">go to completed todo's</router-link>
+      <router-link :to="'/todo/' + $route.params.id + '/completed'">
+        go to completed todo's
+        ({{ todoStore.getGroupCompletedItemsCount($route.params.id) }})
+      </router-link>
 
       <ToDoList :todos="todoStore.getGroupActiveItems($route.params.id)" @edit:item="handleTodoItemEdit"
         @delete:item="handleTodoItemDelete" @completeChange:item="handleCompleteStatusChange" />

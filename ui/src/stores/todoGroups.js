@@ -40,8 +40,19 @@ export const useTodoGroupStore = defineStore({
 
       return group.items?.filter((todo) => todo.completed) || [];
     },
-  },
+    getGroupCompletedItemsCount: (state) => (id) => {
+      const group = state.groups.find((group) => group.id === id);
+      if (!group) return 0;
 
+      return group.items?.filter((todo) => todo.completed).length || 0;
+    },
+    getGroupActiveItemsCount: (state) => (id) => {
+      const group = state.groups.find((group) => group.id === id);
+      if (!group) return 0;
+
+      return group.items?.filter((todo) => !todo.completed).length || 0;
+    },
+  },
   actions: {
     async fetchGroups() {
       if (this.isLoaded) return;
