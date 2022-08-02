@@ -111,7 +111,7 @@ export const useTodoGroupStore = defineStore({
       try {
         const group = await API.addTodoGroup(name);
         this.groups.push(group);
-
+        group.items = [];
         return group;
       } catch (error) {
         console.dir(error);
