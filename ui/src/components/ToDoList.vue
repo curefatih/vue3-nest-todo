@@ -3,7 +3,7 @@
     <p v-show="!todos.length">
       No todo found!
     </p>
-    <li v-for="todo in todos" :key="todo.id">
+    <li v-for="todo in filteredItems" :key="todo.id">
       <ToDo :id="todo.id" :text="todo.text" :dueDate="todo.dueDate" :priority="todo.priority"
         :completed="todo.completed" @edit="$emit('edit:item', todo.id)" @delete="$emit('delete:item', todo.id)"
         @complete="handleCompleteChange" :hideEdit="hideEdit" />
@@ -24,9 +24,20 @@ export default {
     hideEdit: {
       type: Boolean,
       default: false
+    },
+    filter: {
+      type: Function,
+      default: function () {
+        return true;
+      }
     }
   },
   components: { ToDo },
+  computed: {
+    filteredItems() {
+      return this.todos.filter(this.filter);
+    }
+  },
   methods: {
     handleCompleteChange(id, completed) {
       this.$emit('completeChange:item', id, completed);

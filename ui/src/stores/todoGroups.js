@@ -11,46 +11,90 @@ export const useTodoGroupStore = defineStore({
     error: "",
   }),
   getters: {
+    getGroups: (state) => state.groups,
     getGroup: (state) => (id) => {
       return state.groups.find((group) => group.id === id);
+    },
+    getGroupByName: (state) => (name) => {
+      return state.groups.find((group) => group.name === name);
     },
     getGroupItem: (state) => (groupId, id) => {
       const group = state.groups.find((group) => group.id === groupId);
       if (group) {
-        return group.items.find((item) => item.id === id);
+        return group.todos.find((item) => item.id === id);
       }
 
       return null;
+    },
+    getGroupItemsByName: (state) => (groupName) => {
+      const group =
+        state.groups?.find((group) => group.name === groupName) || {};
+      if (group && group.todos) {
+        return group.todos;
+      }
+
+      return [];
+    },
+    getActiveGroupItemsByName: (state) => (groupName) => {
+      const group =
+        state.groups?.find((group) => group.name === groupName) || {};
+      if (group && group.todos) {
+        return group.todos.filter((item) => !item.completed);
+      }
+
+      return [];
+    },
+    getCompletedGroupItemsByName: (state) => (groupName) => {
+      const group =
+        state.groups?.find((group) => group.name === groupName) || {};
+      if (group && group.todos) {
+        return group.todos.filter((item) => item.completed);
+      }
+
+      return [];
     },
     getGroupItems: (state) => (id) => {
       const group = state.groups.find((group) => group.id === id);
       if (!group) return [];
 
-      return group.items || [];
+      return group.todos || [];
     },
     getGroupActiveItems: (state) => (id) => {
-      const group = state.groups.find((group) => group.id === id);
+      const group = state.groups?.find((group) => group.id === id) || {};
       if (!group) return [];
 
-      return group.items?.filter((todo) => !todo.completed) || [];
+      return group.todos?.filter((todo) => !todo.completed) || [];
     },
     getGroupCompletedItems: (state) => (id) => {
       const group = state.groups.find((group) => group.id === id);
       if (!group) return [];
 
-      return group.items?.filter((todo) => todo.completed) || [];
+      return group.todos?.filter((todo) => todo.completed) || [];
     },
     getGroupCompletedItemsCount: (state) => (id) => {
       const group = state.groups.find((group) => group.id === id);
       if (!group) return 0;
 
-      return group.items?.filter((todo) => todo.completed).length || 0;
+      return group.todos?.filter((todo) => todo.completed).length || 0;
     },
     getGroupActiveItemsCount: (state) => (id) => {
       const group = state.groups.find((group) => group.id === id);
       if (!group) return 0;
 
-      return group.items?.filter((todo) => !todo.completed).length || 0;
+      return group.todos?.filter((todo) => !todo.completed).length || 0;
+    },
+    getAllActiveItems: (state) => {
+      return state.groups.reduce((acc, group) => {
+        return acc.concat(group.todos?.filter((todo) => !todo.completed) || []);
+      }, []);
+    },
+    getAllCompletedItems: (state) => {
+      return state.groups.reduce((acc, group) => {
+        return acc.concat(group.todos?.filter((todo) => todo.completed) || []);
+      }, []);
+    },
+    getAllGroupNames: (state) => {
+      return state.groups.map((group) => group.name);
     },
   },
   actions: {
@@ -85,7 +129,7 @@ export const useTodoGroupStore = defineStore({
         return;
       }
 
-      if (this.groups[groupIndex].items) {
+      if (this.groups[groupIndex].todos) {
         this.loading = false;
         return;
       }
@@ -98,7 +142,7 @@ export const useTodoGroupStore = defineStore({
       const items = await API.getTodoGroupItems(groupId);
       this.loading = false;
 
-      this.groups[groupIndex].items = items;
+      this.groups[groupIndex].todos = items;
     },
     async fetchGroupItem(groupId, itemId) {
       if (!groupId || !itemId) {
@@ -129,7 +173,7 @@ export const useTodoGroupStore = defineStore({
             return;
           }
 
-          this.groups[groupIndex].items.push(result);
+          this.groups[groupIndex].todos.push(result);
         }
         return result;
       } catch (error) {
@@ -146,14 +190,14 @@ export const useTodoGroupStore = defineStore({
             return;
           }
 
-          const itemIndex = this.groups[groupIndex].items.findIndex(
+          const itemIndex = this.groups[groupIndex].todos.findIndex(
             (i) => i.id === item.id
           );
           if (itemIndex === -1) {
             return;
           }
 
-          this.groups[groupIndex].items[itemIndex] = result;
+          this.groups[groupIndex].todos[itemIndex] = result;
         }
         return result;
       } catch (error) {
@@ -173,14 +217,14 @@ export const useTodoGroupStore = defineStore({
             return;
           }
 
-          const itemIndex = this.groups[groupIndex].items.findIndex(
+          const itemIndex = this.groups[groupIndex].todos.findIndex(
             (i) => i.id === itemId
           );
           if (itemIndex === -1) {
             return;
           }
 
-          this.groups[groupIndex].items[itemIndex] = result;
+          this.groups[groupIndex].todos[itemIndex] = result;
         }
         return result;
       } catch (error) {
@@ -196,14 +240,14 @@ export const useTodoGroupStore = defineStore({
           return;
         }
 
-        const itemIndex = this.groups[groupIndex].items.findIndex(
+        const itemIndex = this.groups[groupIndex].todos.findIndex(
           (i) => i.id === itemId
         );
         if (itemIndex === -1) {
           return;
         }
 
-        this.groups[groupIndex].items.splice(itemIndex, 1);
+        this.groups[groupIndex].todos.splice(itemIndex, 1);
       } catch (error) {
         console.dir(error);
         this.error = errorMessage(error.response.data.message);
@@ -218,7 +262,10 @@ export const useTodoGroupStore = defineStore({
             return;
           }
 
-          this.groups[groupIndex] = result;
+          this.groups[groupIndex] = {
+            ...this.groups[groupIndex],
+            ...result,
+          };
         }
         return result;
       } catch (error) {
