@@ -17,7 +17,7 @@ export class TodoGroup {
   name: string;
 
   @OneToMany(() => Todo, (todo) => todo.todoGroup)
-  todos: Todo[];
+  items: Todo[];
 
   @ManyToOne(() => User, (user) => user.todoGroups, {
     nullable: false,

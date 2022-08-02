@@ -47,7 +47,9 @@ export class TodoService {
     const todo = this.todoRepository.create(todoItem);
     todo.todoGroup = todoGroup;
 
-    return this.todoRepository.save(todo);
+    const result = await this.todoRepository.save(todo);
+
+    return result;
   }
 
   async getTodoGroup(
@@ -66,7 +68,7 @@ export class TodoService {
     const todoGroups = await this.todoGroupRepository
       .createQueryBuilder('todoGroup')
       .leftJoinAndSelect('todoGroup.owner', 'owner')
-      .leftJoinAndSelect('todoGroup.todos', 'items')
+      .leftJoinAndSelect('todoGroup.items', 'items')
       .where('owner.id = :ownerId', { ownerId: user.id })
       .getMany();
 
@@ -89,7 +91,7 @@ export class TodoService {
     const todoGroup = await this.todoGroupRepository
       .createQueryBuilder('todoGroup')
       .leftJoinAndSelect('todoGroup.owner', 'owner')
-      .leftJoinAndSelect('todoGroup.todos', 'todos')
+      .leftJoinAndSelect('todoGroup.items', 'todos')
       .where('todoGroup.id = :id', { id: groupId })
       .andWhere('owner.id = :ownerId', { ownerId: user.id })
       .getOne();
@@ -99,7 +101,7 @@ export class TodoService {
       return [];
     }
 
-    return todoGroup.todos;
+    return todoGroup.items;
   }
 
   async deleteTodoGroup(

@@ -39,7 +39,7 @@ export class Todo {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => TodoGroup, (todoGroup) => todoGroup.todos, {
+  @ManyToOne(() => TodoGroup, (todoGroup) => todoGroup.items, {
     nullable: false,
     onDelete: 'CASCADE',
   })
